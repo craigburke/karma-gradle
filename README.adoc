@@ -1,0 +1,67 @@
+:version: 1.0.0
+
+= Karma Gradle Plugin
+
+This Gradle plugin allows you to run Jasmine, Qunit, or Mocha tests using the Karma test runner.
+
+== Getting Started
+
+[source,gradle,subs='attributes']
+----
+plugins {
+    id 'com.craigburke.karma' version '{version}'
+}
+----
+
+== Tasks
+
+The plugin adds the following tasks to your build:
+
+|===
+
+| *Task* | *Description* 
+
+| karmaRun | Runs your tests
+
+| karmaWatch | Runs your tests in watch mode
+
+| karmaRefresh | Refresh the generated karma config file
+
+| karmaClean | Deletes the karma config file and removes the jasmine dependencies
+
+|===
+
+== Configuration
+
+You can use the same properties you'd set in your http://karma-runner.github.io/0.13/config/configuration-file.html[karma.config.js file] directly in *build.gradle*
+
+[source,gradle,subs='attributes']
+----
+plugins {
+    id 'com.craigburke.karma' version '{version}'
+}
+
+karma {
+    basePath = 'src/assets' // <1>
+
+    browsers = ['PhantomJs'] // <2>
+    frameworks = ['jasmine'] // <3>
+    reporters = [''] // <4>
+}
+----
+
+NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
+
+=== Advanced configuration
+
+In addition to the properties listed above, you can also include set other Karma properties through the additional map.
+ 
+[source,gradle,subs='attributes']
+----
+karma {
+    additional = [ // <1>
+        colors: true
+    ]
+}
+----
+<1> *additional* is a map that allows additional properties to be added to Karma's configuration.

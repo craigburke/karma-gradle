@@ -1,0 +1,54 @@
+plugins {
+    id 'com.gradle.plugin-publish' version '0.9.1'
+    id 'groovy'
+    id 'maven-publish'
+}
+
+targetCompatibility = 1.6
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+group = 'com.craigburke.gradle'
+version = '1.0.0'
+
+ext {
+    artifactId = 'karma'
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.codehaus.groovy:groovy-all:2.3.10'
+    compile 'com.moowork.gradle:gradle-node-plugin:0.11'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId project.artifactId
+            from components.java
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/craigburke/karma-gradle'
+    vcsUrl = 'https://github.com/craigburke/karma-gradle'
+    description = 'allows you to run tests using Karma'
+    tags = ['jasmine', 'karma', 'qunit']
+
+    plugins {
+        jasmine {
+            id = 'com.craigburke.karma'
+            displayName = 'Karma Test Runner Plugin'
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
