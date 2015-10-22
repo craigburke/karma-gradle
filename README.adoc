@@ -27,7 +27,7 @@ The plugin adds the following tasks to your build:
 
 | karmaRefresh | Refresh the generated karma config file
 
-| karmaClean | Deletes the karma config file and removes the jasmine dependencies
+| karmaClean | Deletes the karma config file and removes the dependencies
 
 |===
 
@@ -49,6 +49,7 @@ karma {
     reporters = [''] // <4>
 }
 ----
+<1>
 
 NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
 

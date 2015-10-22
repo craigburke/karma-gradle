@@ -45,6 +45,7 @@ class KarmaModuleExtension {
 
     List getDependencies() {
         List dependencies = ['karma']
+
         browsers.each { String browser ->
             dependencies += BROWSER_DEPENDENCIES[browser]
         }
@@ -55,6 +56,7 @@ class KarmaModuleExtension {
             dependencies += REPORTER_DEPENDENCIES[reporter]
         }
         dependencies += additionalDependencies
+        dependencies.findAll { it }
     }
 
     String getConfigJson() {

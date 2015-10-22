@@ -22,17 +22,7 @@ class KarmaPlugin implements Plugin<Project> {
         KarmaModuleExtension config = project.extensions.create('karma', KarmaModuleExtension)
         boolean karmaDebug = project.hasProperty('karmaDebug') ? project.property('karmaDebug') : false
         
-        project.task('karmaDependencies', type: NpmTask, description: 'Installs dependencies needed for running karma tests.', group: null)  {
-            args = ['install'] + config.dependencies
-            outputs.files getDependencyPaths(NPM_OUTPUT_PATH, config.dependencies)
-            execOverrides {
-                OutputStream out = new ByteArrayOutputStream()
-                if (!karmaDebug) {
-                    it.standardOutput = out
-                    it.errorOutput = out
-                }
-            }
-        }
+        project.task('karmaDependencies', type: NpmTask, description: 'Installs dependencies needed for running karma tests.', group: null)
 
         project.task('karmaGenerateConfig', description: 'Generates the karma config file', group: null) {
             outputs.file KARMA_CONFIG
@@ -65,6 +55,18 @@ class KarmaPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate {
+            project.tasks.findByName('karmaDependencies').configure {
+                args = ['install'] + config.dependencies
+                outputs.files getDependencyPaths(NPM_OUTPUT_PATH, config.dependencies)
+                execOverrides {
+                    OutputStream out = new ByteArrayOutputStream()
+                    if (!karmaDebug) {
+                        it.standardOutput = out
+                        it.errorOutput = out
+                    }
+                }
+            }
+
             if (config.basePath == null) {
                 boolean grailsPluginApplied = project.extensions.findByName('grails')
                 config.basePath = grailsPluginApplied ? 'grails-app/assets/' : 'src/assets/'
