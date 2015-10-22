@@ -57,12 +57,12 @@ karma {
     exclude = ['jquery.js'] // <6>
 }
 ----
-<1> Optional base path for relative paths (like files or excludes).
-<2> Runs tests in the browsers listed here (launcher dependencies are included). Possible values: PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari
-<3> Uses the listed frameworks and installs the dependencies. Possible values: jasmine, mocha, qunit.
-<4> Add additional reporters (also installs needed dependencies). Possible values: progress, junit, coverage, growl, teamcity
+<1> Optional base path for resolving relative paths (used by files or exclude).
+<2> Runs tests in the browsers listed here. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
+<3> Uses the listed installs dependencies for the listed browsers. **Possible values:** `jasmine, mocha, qunit`.
+<4> Add additional reporters (also installs needed dependencies). **Possible values:** `progress, junit, coverage, growl, teamcity`
 <5> Files for karma to load
-<6> Exclusions for files
+<6> Karma file exclusions
 
 NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
 
@@ -77,4 +77,3 @@ karma {
     junitReporter = [outputDir: 'test-dir' ]
 }
 ----
-<1> *additional* is a map that allows additional properties to be added to Karma's configuration.
