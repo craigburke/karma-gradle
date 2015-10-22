@@ -44,25 +44,37 @@ plugins {
 karma {
     basePath = 'src/assets' // <1>
 
-    browsers = ['PhantomJs'] // <2>
+    browsers = ['PhantomJS'] // <2>
     frameworks = ['jasmine'] // <3>
-    reporters = [''] // <4>
+    reporters = ['junit'] // <4>
+
+    files = [ // <5>
+        'bower/angular/angular.js',
+        '**/!(*.spec).js',
+        '**/*.spec.js'
+    ]
+
+    exclude = ['jquery.js'] // <6>
 }
 ----
-<1>
+<1> Optional base path for relative paths (like files or excludes).
+<2> Runs tests in the browsers listed here (launcher dependencies are included). Possible values: PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari
+<3> Uses the listed frameworks and installs the dependencies. Possible values: jasmine, mocha, qunit.
+<4> Add additional reporters (also installs needed dependencies). Possible values: progress, junit, coverage, growl, teamcity
+<5> Files for karma to load
+<6> Exclusions for files
 
 NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
 
 === Advanced configuration
 
-In addition to the properties listed above, you can also include set other Karma properties through the additional map.
+In addition to the properties listed above, you can also include set other Karma properties through the DSL.
  
 [source,gradle,subs='attributes']
 ----
 karma {
-    additional = [ // <1>
-        colors: true
-    ]
+    colors = true
+    junitReporter = [outputDir: 'test-dir' ]
 }
 ----
 <1> *additional* is a map that allows additional properties to be added to Karma's configuration.

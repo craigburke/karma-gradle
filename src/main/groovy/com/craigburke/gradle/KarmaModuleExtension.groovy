@@ -11,8 +11,7 @@ class KarmaModuleExtension {
     List reporters = []
     Map preprocessors = [:]
     List files = []
-    List excludes = []
-    Map additional = [:]
+    List exclude = []
 
     static final BROWSER_DEPENDENCIES = [
             'Chrome'           : ['karma-chrome-launcher'],
@@ -38,9 +37,14 @@ class KarmaModuleExtension {
     ]
 
     private List additionalDependencies = []
+    private Map additionalProperties = [:]
 
     void dependencies(List<String> dependencies) {
         additionalDependencies += dependencies
+    }
+
+    def propertyMissing(String name, value) {
+        additionalProperties[name] = value
     }
 
     List getDependencies() {
@@ -67,10 +71,10 @@ class KarmaModuleExtension {
                 frameworks   : frameworks,
                 reporters    : reporters,
                 preprocessors: preprocessors,
-                excludes     : excludes
+                exclude      : exclude
         ]
 
-        additional.each { properties[it.key] = it.value }
+        additionalProperties.each { properties[it.key] = it.value }
 
         def json = new JsonBuilder()
         json(properties)

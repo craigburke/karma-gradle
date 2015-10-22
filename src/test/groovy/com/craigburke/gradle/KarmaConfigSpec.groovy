@@ -7,7 +7,8 @@ import spock.lang.Unroll
 import static KarmaConstants.*
 
 class KarmaConfigSpec extends Specification {
-    @Shared KarmaModuleExtension karmaConfig
+    @Shared
+    KarmaModuleExtension karmaConfig
 
     def setup() {
         karmaConfig = new KarmaModuleExtension()
@@ -44,6 +45,31 @@ class KarmaConfigSpec extends Specification {
 
         where:
         framework << FRAMEWORKS
+    }
+
+    @Unroll('Add addition property #property')
+    def "additional properties added to DSL"() {
+        setup:
+        def configBlock = configClosure {
+            this[property] = value
+        }
+
+        when:
+        configBlock()
+
+        then:
+        configMap[property] == value
+
+        where:
+        property      | value
+        'stringProp'  | 'bar'
+        'booleanProp' | true
+        'mapProp'     | ['foo': ['bar': 999]]
+        'arrayProp'   | ['foo', 'bar', 'foobar']
+    }
+
+    private Closure configClosure(Closure closure) {
+        closure.rehydrate(karmaConfig, karmaConfig, karmaConfig)
     }
 
     private getConfigMap() {
