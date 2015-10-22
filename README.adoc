@@ -58,9 +58,9 @@ karma {
 }
 ----
 <1> Optional base path for resolving relative paths (used by files or exclude).
-<2> Runs tests in the browsers listed here. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
-<3> Uses the listed installs dependencies for the listed browsers. **Possible values:** `jasmine, mocha, qunit`.
-<4> Add additional reporters (also installs needed dependencies). **Possible values:** `progress, junit, coverage, growl, teamcity`
+<2> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
+<3> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
+<4> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
 <5> Files for karma to load
 <6> Karma file exclusions
 
