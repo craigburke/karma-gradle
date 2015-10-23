@@ -99,8 +99,6 @@ karma {
 <2> Overriding both the base path and list of source files. This will add `/src/&#42;&#42;/source1.js` and `/src/&#42;&#42;/&#42;&#42;.js` to the files list after the library files.
 <3> Overriding both the base path and list of test files. This will add `/tests/&#42;&#42;/&#42;&#42;.test.js` to the files list after the source files.
 
-NOTE: the
-
 NOTE: you can always build your own files list by setting the `files` property directly (see Advanced Configuration).
 
 === Dependencies
