@@ -95,9 +95,9 @@ karma {
     }
 }
 ----
-<1> Overriding both the base path and list of library files. This will add `/libs/**/jquery.js` and `/libs/**/lib1.js` to the start of the karma files list
-<2> Overriding both the base path and list of source files. This will add `/src/**/source1.js` and `/src/**/**.js` to the files list after the library files.
-<3> Overriding both the base path and list of test files. This will add `/tests/**/**.test.js` to the files list after the source files.
+<1> Overriding both the base path and list of library files. This will add `/libs/&#42;&#42;/jquery.js and `/libs/&#42;&#42;/lib1.js` to the start of the karma files list
+<2> Overriding both the base path and list of source files. This will add `/src/&#42;&#42;/source1.js` and `/src/&#42;&#42;/&#42;&#42;.js` to the files list after the library files.
+<3> Overriding both the base path and list of test files. This will add `/tests/&#42;&#42;/&#42;&#42;.test.js` to the files list after the source files.
 
 NOTE: you can always build your own files list by setting the `files` property directly (see Advanced Configuration).
 
@@ -110,7 +110,7 @@ By default the plugin will automatically install all needed browser, framework a
 karma {
     dependencies ['karma-sinon']
 }
----
+----
 
 You can also lock any dependency to a specific version by adding it this way with @ version syntax:
 
@@ -119,7 +119,7 @@ You can also lock any dependency to a specific version by adding it this way wit
 karma {
     dependencies ['phantomjs@1.9.7-14']
 }
----
+----
 
 === Advanced Configuration
 
