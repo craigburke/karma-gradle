@@ -68,9 +68,14 @@ class KarmaPlugin implements Plugin<Project> {
             }
 
             if (config.basePath == null) {
-                boolean grailsPluginApplied = project.extensions.findByName('grails')
-                config.basePath = grailsPluginApplied ? 'grails-app/assets/' : 'src/assets/'
+                config.basePath = project.rootDir.absolutePath
             }
+
+            boolean grailsPluginApplied = project.extensions.findByName('grails')
+
+            Profile.librariesBaseDefault = grailsPluginApplied ? 'grails-app/assets/bower/' : 'src/assets/bower/'
+            Profile.sourceBaseDefault = grailsPluginApplied ? 'grails-app/assets/' : 'src/assets/'
+            Profile.testsBaseDefault = grailsPluginApplied ? 'grails-app/assets/' : 'src/assets/'
 
             def testTask = project.tasks.findByName('test')
             if (testTask) {

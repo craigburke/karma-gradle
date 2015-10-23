@@ -5,9 +5,13 @@ import groovy.transform.AutoClone
 @AutoClone
 class Profile {
 
-    String testsBase = ''
-    String librariesBase = 'bower/**/'
-    String sourceBase = ''
+    static String testsBaseDefault
+    static String librariesBaseDefault
+    static String sourceBaseDefault
+
+    String testsBase
+    String librariesBase
+    String sourceBase
 
     List<String> libraries = []
     List<String> source = []
@@ -24,15 +28,15 @@ class Profile {
     List<String> getFileList(ProfileFileType type) {
         switch (type) {
             case ProfileFileType.LIBRARIES:
-                libraries.collect { "${librariesBase}${it}" }
+                libraries.collect { "${librariesBase ?: librariesBaseDefault}${it}" }
                 break
 
             case ProfileFileType.SOURCE:
-                source.collect { "${sourceBase}${it}"}
+                source.collect { "${sourceBase ?: sourceBaseDefault}${it}"}
                 break
 
             case ProfileFileType.TESTS:
-                tests.collect { "${testsBase}${it}"}
+                tests.collect { "${testsBase ?: testsBaseDefault}${it}"}
                 break
 
         }

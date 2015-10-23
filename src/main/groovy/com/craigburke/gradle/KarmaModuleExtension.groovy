@@ -18,15 +18,12 @@ class KarmaModuleExtension {
     private List<String> additionalDependencies = []
     private Map configProperties = [:]
 
-    void profile(String profileName, Closure configClosure = null) {
-        def profile = getProfile(profileName)
+    private String profileName
+    private Closure profileConfig
 
-        if (profile) {
-            if (configClosure) {
-                configClosure.rehydrate(profile, profile, profile).call()
-            }
-            files += profile.files
-        }
+    void profile(String profileName, Closure profileConfig = null) {
+        this.profileName = profileName
+        this.profileConfig = profileConfig
     }
 
     private Profile getProfile(String profileName) {
@@ -65,12 +62,20 @@ class KarmaModuleExtension {
     }
 
     String getConfigJson() {
-        if (!files) {
+
+        if (profileName) {
+            Profile profile = getProfile(profileName)
+            if (profile && profileConfig) {
+                profileConfig.rehydrate(profile, profile, profile).call()
+            }
+            files = profile?.files
+        }
+        else if (!files) {
             files = getProfile('default').files
         }
 
         Map properties = [
-                basePath     : "../${basePath}",
+                basePath     : basePath,
                 logLevel     : 'ERROR',
                 files        : files,
                 browsers     : browsers,

@@ -58,7 +58,7 @@ karma {
 <4> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
 <5> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
 
-NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
+NOTE: if *basePath* is not set, it defaults the project root.
 
 === Profiles
 
@@ -98,6 +98,8 @@ karma {
 <1> Overriding both the base path and list of library files. This will add `/libs/&#42;&#42;/jquery.js` and `/libs/&#42;&#42;/lib1.js` to the start of the karma files list
 <2> Overriding both the base path and list of source files. This will add `/src/&#42;&#42;/source1.js` and `/src/&#42;&#42;/&#42;&#42;.js` to the files list after the library files.
 <3> Overriding both the base path and list of test files. This will add `/tests/&#42;&#42;/&#42;&#42;.test.js` to the files list after the source files.
+
+NOTE: the
 
 NOTE: you can always build your own files list by setting the `files` property directly (see Advanced Configuration).
 
