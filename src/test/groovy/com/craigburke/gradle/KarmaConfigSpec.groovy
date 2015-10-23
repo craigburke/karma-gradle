@@ -1,6 +1,7 @@
 package com.craigburke.gradle
 
 import groovy.json.JsonSlurper
+import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -66,6 +67,31 @@ class KarmaConfigSpec extends Specification {
         'booleanProp' | true
         'mapProp'     | ['foo': ['bar': 999]]
         'arrayProp'   | ['foo', 'bar', 'foobar']
+    }
+
+    @Unroll('Override #defaultDependency with #overrideDependency')
+    def "override dependencies with a specfic version"() {
+        expect:
+        karmaConfig.dependencies.contains(defaultDependency)
+
+        and:
+        !karmaConfig.dependencies.contains(overrideDependency)
+
+        when:
+        karmaConfig.dependencies([overrideDependency])
+
+        then:
+        karmaConfig.dependencies.contains(overrideDependency)
+
+        and:
+        !karmaConfig.dependencies.contains(defaultDependency)
+
+        where:
+        defaultDependency | overrideDependency
+        'karma'           | 'karma@v1'
+        'karma'           | 'karma@foo'
+        'phantomjs'       | 'phantomjs@1'
+        'phantomjs'       | 'phantomjs@foo'
     }
 
     private Closure configClosure(Closure closure) {

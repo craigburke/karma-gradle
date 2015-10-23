@@ -36,15 +36,15 @@ class KarmaModuleExtension {
             'coverage': ['karma-coverage']
     ]
 
-    private List additionalDependencies = []
-    private Map additionalProperties = [:]
+    private List<String> additionalDependencies = []
+    private Map configProperties = [:]
 
     void dependencies(List<String> dependencies) {
         additionalDependencies += dependencies
     }
 
     def propertyMissing(String name, value) {
-        additionalProperties[name] = value
+        configProperties[name] = value
     }
 
     List getDependencies() {
@@ -59,8 +59,15 @@ class KarmaModuleExtension {
         reporters.each { String reporter ->
             dependencies += REPORTER_DEPENDENCIES[reporter]
         }
-        dependencies += additionalDependencies
+
+        def simpleAdditionalDependencies = additionalDependencies.collect { getSimpleDependency(it) }
+        def overridenDependencies = dependencies.findAll { simpleAdditionalDependencies.contains(getSimpleDependency(it)) }
+        dependencies = dependencies - overridenDependencies + additionalDependencies
         dependencies.findAll { it }
+    }
+
+    private String getSimpleDependency(String dependency) {
+        dependency.split('@').first()
     }
 
     String getConfigJson() {
@@ -74,7 +81,7 @@ class KarmaModuleExtension {
                 exclude      : exclude
         ]
 
-        additionalProperties.each { properties[it.key] = it.value }
+        configProperties.each { properties[it.key] = it.value }
 
         def json = new JsonBuilder()
         json(properties)
