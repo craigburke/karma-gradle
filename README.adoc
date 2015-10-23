@@ -95,7 +95,7 @@ karma {
     }
 }
 ----
-<1> Overriding both the base path and list of library files. This will add `/libs/&#42;&#42;/jquery.js and `/libs/&#42;&#42;/lib1.js` to the start of the karma files list
+<1> Overriding both the base path and list of library files. This will add `/libs/&#42;&#42;/jquery.js` and `/libs/&#42;&#42;/lib1.js` to the start of the karma files list
 <2> Overriding both the base path and list of source files. This will add `/src/&#42;&#42;/source1.js` and `/src/&#42;&#42;/&#42;&#42;.js` to the files list after the library files.
 <3> Overriding both the base path and list of test files. This will add `/tests/&#42;&#42;/&#42;&#42;.test.js` to the files list after the source files.
 
