@@ -1,4 +1,4 @@
-:version: 1.0.0
+:version: 1.1.0
 
 = Karma Gradle Plugin
 
@@ -33,6 +33,8 @@ The plugin adds the following tasks to your build:
 
 == Configuration
 
+=== Properties
+
 You can use the same properties you'd set in your http://karma-runner.github.io/0.13/config/configuration-file.html[karma.config.js file] directly in *build.gradle*
 
 [source,gradle,subs='attributes']
@@ -43,36 +45,96 @@ plugins {
 
 karma {
     basePath = 'src/assets' // <1>
+    profile 'angularJS' // <2>
 
-    browsers = ['PhantomJS'] // <2>
-    frameworks = ['jasmine'] // <3>
-    reporters = ['junit'] // <4>
-
-    files = [ // <5>
-        'bower/angular/angular.js',
-        '**/!(*.spec).js',
-        '**/*.spec.js'
-    ]
-
-    exclude = ['jquery.js'] // <6>
+    browsers = ['PhantomJS'] // <3>
+    frameworks = ['jasmine'] // <4>
+    reporters = ['junit'] // <5>
 }
 ----
-<1> Optional base path for resolving relative paths (used by files or exclude).
+<1> File list profile to use  **Possible values:** `default, angularJS`
 <2> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
 <3> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
 <4> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
-<5> Files for karma to load
-<6> Karma file exclusions
 
 NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
 
-=== Advanced configuration
+=== Profiles
+
+Profiles allow you to use commonly used file patterns and sensible defaults for the files list. Currently there is a `default` and an `angularJS` profile.
+
+[source,gradle,subs='attributes']
+----
+plugins {
+    id 'com.craigburke.karma' version '{version}'
+}
+
+karma {
+    profile 'angularJS'  // <1>
+}
+----
+<1> Applying the angularJS profile
+
+For any profile, the files to be loaded are broken into three groups (libraries, source and tests).
+You can override the base path and file pattern list for any of these groups within a profile. This can be
+useful if the order that the files are loaded in matters.
+
+[source,gradle,subs='attributes']
+----
+karma {
+    profile 'default'  {
+        librariesBase = 'libs/**/'
+        libraries = ['jquery.js', 'lib1.js'] // <1>
+
+        sourceBase = 'src/**/'
+        source = ['source1.js', '**/.js'] // <2>
+
+        testsBase = 'tests/**/'
+        tests = ['**.test.js'] // <3>
+    }
+}
+----
+<1> Overriding both the base path and list of library files. This will add `/libs/**/jquery.js` and `/libs/**/lib1.js` to the start of the karma files list
+<2> Overriding both the base path and list of source files. This will add `/src/**/source1.js` and `/src/**/**.js` to the files list after the library files.
+<3> Overriding both the base path and list of test files. This will add `/tests/**/**.test.js` to the files list after the source files.
+
+NOTE: you can always build your own files list by setting the `files` property directly (see Advanced Configuration).
+
+=== Dependencies
+
+By default the plugin will automatically install all needed browser, framework and reporter dependencies. If you need to add an additional npm dependency you can set it using the `dependencies` method.
+
+[source,gradle,subs='attributes']
+----
+karma {
+    dependencies ['karma-sinon']
+}
+---
+
+You can also lock any dependency to a specific version by adding it this way with @ version syntax:
+
+[source,gradle,subs='attributes']
+----
+karma {
+    dependencies ['phantomjs@1.9.7-14']
+}
+---
+
+=== Advanced Configuration
 
 In addition to the properties listed above, you can also include set other Karma properties through the DSL.
  
 [source,gradle,subs='attributes']
 ----
 karma {
+    files = [
+        'bower/angular/angular.js',
+        '**/!(*.spec).js',
+        '**/*.spec.js'
+    ]
+
+    exclude = ['jquery.js']
+
     colors = true
     junitReporter = [outputDir: 'test-dir' ]
 }

@@ -1,19 +1,10 @@
 package com.craigburke.gradle
 
-import groovy.json.JsonSlurper
-import spock.lang.IgnoreRest
-import spock.lang.Shared
-import spock.lang.Specification
 import spock.lang.Unroll
+import static TestConstants.*
 import static KarmaConstants.*
 
-class KarmaConfigSpec extends Specification {
-    @Shared
-    KarmaModuleExtension karmaConfig
-
-    def setup() {
-        karmaConfig = new KarmaModuleExtension()
-    }
+class KarmaConfigSpec extends KarmaBaseSpec {
 
     @Unroll('Reporter #reporter is added to config file')
     def "reporters are added to config file"() {
@@ -23,7 +14,7 @@ class KarmaConfigSpec extends Specification {
         configMap['reporters'] == [reporter]
 
         where:
-        reporter << REPORTERS
+        reporter << REPORTER_LIST
     }
 
     @Unroll('Browser #browser is added to config file')
@@ -34,7 +25,7 @@ class KarmaConfigSpec extends Specification {
         configMap['browsers'] == [browser]
 
         where:
-        browser << BROWSERS
+        browser << BROWSER_LIST
     }
 
     @Unroll('Framework #framework is added to config file')
@@ -45,18 +36,15 @@ class KarmaConfigSpec extends Specification {
         configMap['frameworks'] == [framework]
 
         where:
-        framework << FRAMEWORKS
+        framework << FRAMEWORK_LIST
     }
 
     @Unroll('Add addition property #property')
     def "additional properties added to DSL"() {
-        setup:
-        def configBlock = configClosure {
+        when:
+        karma {
             this[property] = value
         }
-
-        when:
-        configBlock()
 
         then:
         configMap[property] == value
@@ -67,39 +55,6 @@ class KarmaConfigSpec extends Specification {
         'booleanProp' | true
         'mapProp'     | ['foo': ['bar': 999]]
         'arrayProp'   | ['foo', 'bar', 'foobar']
-    }
-
-    @Unroll('Override #defaultDependency with #overrideDependency')
-    def "override dependencies with a specfic version"() {
-        expect:
-        karmaConfig.dependencies.contains(defaultDependency)
-
-        and:
-        !karmaConfig.dependencies.contains(overrideDependency)
-
-        when:
-        karmaConfig.dependencies([overrideDependency])
-
-        then:
-        karmaConfig.dependencies.contains(overrideDependency)
-
-        and:
-        !karmaConfig.dependencies.contains(defaultDependency)
-
-        where:
-        defaultDependency | overrideDependency
-        'karma'           | 'karma@v1'
-        'karma'           | 'karma@foo'
-        'phantomjs'       | 'phantomjs@1'
-        'phantomjs'       | 'phantomjs@foo'
-    }
-
-    private Closure configClosure(Closure closure) {
-        closure.rehydrate(karmaConfig, karmaConfig, karmaConfig)
-    }
-
-    private getConfigMap() {
-        new JsonSlurper().parseText(karmaConfig.configJson)
     }
 
 }

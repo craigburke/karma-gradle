@@ -1,6 +1,7 @@
 package com.craigburke.gradle
 
 import groovy.json.JsonBuilder
+import static KarmaConstants.*
 
 class KarmaModuleExtension {
 
@@ -8,36 +9,29 @@ class KarmaModuleExtension {
 
     List frameworks = ['jasmine']
     List browsers = ['PhantomJS']
-    List reporters = []
+    List reporters = ['progress']
+
     Map preprocessors = [:]
     List files = []
     List exclude = []
 
-    static final BROWSER_DEPENDENCIES = [
-            'Chrome'           : ['karma-chrome-launcher'],
-            'ChromeCanary'     : ['karma-chrome-launcher'],
-            'PhantomJS'        : ['karma-phantomjs-launcher', 'phantomjs'],
-            'Firefox'          : ['karma-firefox-launcher'],
-            'Opera'            : ['karma-opera-launcher'],
-            'Internet Explorer': ['karma-ie-launcher'],
-            'Safari'           : ['karma-safari-launcher']
-    ]
-
-    static final FRAMEWORK_DEPENDENCIES = [
-            'jasmine': ['karma-jasmine@2_0'],
-            'mocha'  : ['karma-mocha'],
-            'qunit'  : ['karma-qunit']
-    ]
-
-    static final REPORTER_DEPENDENCIES = [
-            'growl'   : ['karma-growl-reporter'],
-            'junit'   : ['karma-junit-reporter'],
-            'teamcity': ['karma-teamcity-reporter'],
-            'coverage': ['karma-coverage']
-    ]
-
     private List<String> additionalDependencies = []
     private Map configProperties = [:]
+
+    void profile(String profileName, Closure configClosure = null) {
+        def profile = getProfile(profileName)
+
+        if (profile) {
+            if (configClosure) {
+                configClosure.rehydrate(profile, profile, profile).call()
+            }
+            files += profile.files
+        }
+    }
+
+    private Profile getProfile(String profileName) {
+        PROFILES[profileName].clone()
+    }
 
     void dependencies(List<String> dependencies) {
         additionalDependencies += dependencies
@@ -61,18 +55,23 @@ class KarmaModuleExtension {
         }
 
         def simpleAdditionalDependencies = additionalDependencies.collect { getSimpleDependency(it) }
-        def overridenDependencies = dependencies.findAll { simpleAdditionalDependencies.contains(getSimpleDependency(it)) }
-        dependencies = dependencies - overridenDependencies + additionalDependencies
+        def overriddenDependencies = dependencies.findAll { simpleAdditionalDependencies?.contains(getSimpleDependency(it)) }
+        dependencies = dependencies - overriddenDependencies + additionalDependencies
         dependencies.findAll { it }
     }
 
-    private String getSimpleDependency(String dependency) {
-        dependency.split('@').first()
+    static String getSimpleDependency(String dependency) {
+        dependency?.split('@')?.first()
     }
 
     String getConfigJson() {
+        if (!files) {
+            files = getProfile('default').files
+        }
+
         Map properties = [
                 basePath     : "../${basePath}",
+                logLevel     : 'ERROR',
                 files        : files,
                 browsers     : browsers,
                 frameworks   : frameworks,
