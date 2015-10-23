@@ -52,10 +52,11 @@ karma {
     reporters = ['junit'] // <5>
 }
 ----
-<1> File list profile to use  **Possible values:** `default, angularJS`
-<2> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
-<3> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
-<4> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
+<1> Optional base path for resolving relative paths
+<2> File pattern profile to use. **Possible values:** `default, angularJS`
+<3> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
+<4> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
+<5> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
 
 NOTE: if *basePath* is not set, it defaults to `src/assets` or `grails-app/assets` if the Grails plugin is applied.
 
