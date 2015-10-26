@@ -18,16 +18,22 @@ class KarmaModuleExtension {
     private List<String> additionalDependencies = []
     private Map configProperties = [:]
 
-    private String profileName
+    private String profileName = 'default'
     private Closure profileConfig
+    private Profile profile
 
     void profile(String profileName, Closure profileConfig = null) {
         this.profileName = profileName
         this.profileConfig = profileConfig
     }
 
-    private Profile getProfile(String profileName) {
-        PROFILES[profileName].clone()
+    void finalizeConfig(boolean usesAssetPipeline = false, String assetPath = '', String assetCompileDir = '') {
+        profile = PROFILES[profileName].clone()
+        profile.setDefaults(usesAssetPipeline, assetPath, assetCompileDir)
+
+        if (profile && profileConfig) {
+            profileConfig.rehydrate(profile, profile, profile).call()
+        }
     }
 
     void dependencies(List<String> dependencies) {
@@ -62,22 +68,12 @@ class KarmaModuleExtension {
     }
 
     String getConfigJson() {
-
-        if (profileName) {
-            Profile profile = getProfile(profileName)
-            if (profile && profileConfig) {
-                profileConfig.rehydrate(profile, profile, profile).call()
-            }
-            files = profile?.files
-        }
-        else if (!files) {
-            files = getProfile('default').files
-        }
+        List<String> karmaFiles = files ?: profile.files
 
         Map properties = [
                 basePath     : basePath,
                 logLevel     : 'ERROR',
-                files        : files,
+                files        : karmaFiles,
                 browsers     : browsers,
                 frameworks   : frameworks,
                 reporters    : reporters,
@@ -89,7 +85,7 @@ class KarmaModuleExtension {
 
         def json = new JsonBuilder()
         json(properties)
-        json.toString()
+        json.toPrettyString()
     }
 
     String getConfigJavaScript() {

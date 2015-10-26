@@ -5,41 +5,82 @@ import groovy.transform.AutoClone
 @AutoClone
 class Profile {
 
-    static String testsBaseDefault
-    static String librariesBaseDefault
-    static String sourceBaseDefault
+    List<String> libraryBaseDefault
+    List<String> libraryBases
+    List<String> libraryFilesDefault
+    List<String> libraryFiles
 
-    String testsBase
-    String librariesBase
-    String sourceBase
+    List<String> sourceBasesDefault
+    List<String> sourceBases
+    List<String> sourceFilesDefault
+    List<String> sourceFiles
 
-    List<String> libraries = []
-    List<String> source = []
-    List<String> tests = []
+    List<String> testBasesDefault
+    List<String> testBases
+    List<String> testFilesDefault
+    List<String> testFiles
 
-    List<String> getFiles() {
-        def files = []
-        files += getFileList(ProfileFileType.LIBRARIES)
-        files += getFileList(ProfileFileType.SOURCE)
-        files += getFileList(ProfileFileType.TESTS)
-        files
-    }
+    void setDefaults(boolean usesAssetPipeline = false, String assetPath = '', String assetPipelineCompileDir = '') {
+        if (libraryBases == null) {
+            libraryBases = usesAssetPipeline ? [] : libraryBaseDefault
+        }
+        if (libraryFiles == null) {
+            libraryFiles = usesAssetPipeline ? [] : libraryFilesDefault
+        }
 
-    List<String> getFileList(ProfileFileType type) {
-        switch (type) {
-            case ProfileFileType.LIBRARIES:
-                libraries.collect { "${librariesBase ?: librariesBaseDefault}${it}" }
-                break
+        if (sourceBases == null) {
+            sourceBases = usesAssetPipeline ? ["${assetPipelineCompileDir}/"] : ['']
+        }
+        if (sourceFiles == null) {
+            sourceFiles = usesAssetPipeline ? ['app.js' , 'application.js'] : sourceFilesDefault
+        }
 
-            case ProfileFileType.SOURCE:
-                source.collect { "${sourceBase ?: sourceBaseDefault}${it}"}
-                break
-
-            case ProfileFileType.TESTS:
-                tests.collect { "${testsBase ?: testsBaseDefault}${it}"}
-                break
-
+        if (testBases == null) {
+            testBases = usesAssetPipeline ? ["${assetPath}/"] + testBasesDefault : testBasesDefault
+        }
+        if (testFiles == null) {
+            testFiles = testFilesDefault
         }
 
     }
+
+    List<String> getFiles() {
+        def files = []
+        files += getFileListByType(ProfileFileType.LIBRARIES)
+        files += getFileListByType(ProfileFileType.SOURCE)
+        files += getFileListByType(ProfileFileType.TESTS)
+        files
+    }
+
+    List<String> getFileListByType(ProfileFileType type) {
+        List<String> bases
+        List<String> files
+
+        switch (type) {
+            case ProfileFileType.LIBRARIES:
+                bases = libraryBases
+                files = libraryFiles
+                break
+
+            case ProfileFileType.SOURCE:
+                bases = sourceBases
+                files = sourceFiles
+                break
+
+            case ProfileFileType.TESTS:
+                bases = testBases
+                files = testFiles
+
+                break
+        }
+
+        getFileList(bases, files)
+    }
+
+    static List<String> getFileList(List<String> bases, List<String> files) {
+        files?.collect { String file ->
+            bases ? bases.collect { String base -> "${base}${file}" } : file
+        }?.flatten() ?: []
+    }
+
 }

@@ -84,14 +84,14 @@ useful if the order that the files are loaded in matters.
 ----
 karma {
     profile 'default'  {
-        librariesBase = 'libs/'
-        libraries = ['jquery.js', 'lib1.js'] // <1>
+        libraryBases = ['**/libs/', '**/vendor/']
+        libraryFiles = ['jquery.js', 'lib1.js'] // <1>
 
-        sourceBase = 'src/'
-        source = ['source1.js', '**/*.js'] // <2>
+        sourceBases = ['**/src/', '**/app/']
+        sourceFiles = ['source1.js', '**/*.js'] // <2>
 
-        testsBase = 'tests/'
-        tests = ['**/*test.js'] // <3>
+        testBases = ['tests/']
+        testFiles = ['**/*test.js'] // <3>
     }
 }
 ----

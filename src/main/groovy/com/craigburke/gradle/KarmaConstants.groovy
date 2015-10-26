@@ -13,7 +13,7 @@ class KarmaConstants {
     ]
 
     static final FRAMEWORK_DEPENDENCIES = [
-            'jasmine': ['karma-jasmine@2_0'],
+            'jasmine': ['karma-jasmine'],
             'mocha'  : ['karma-mocha'],
             'qunit'  : ['karma-qunit']
     ]
@@ -25,16 +25,41 @@ class KarmaConstants {
             'coverage': ['karma-coverage']
     ]
 
+    static final List<String> LIBRARY_BASE_PATTERNS = [
+            '**/bower_components/', '**/bower/', '**/vendor/'
+    ]
+
+    static final List<String> TEST_BASE_PATTERNS = [
+            '**/tests/', 'src/test/js/'
+    ]
+
+    static final List<String> TEST_FILE_PATTERNS = [
+            '**/*.spec.js',
+            '**/tests/**.js',
+            '**/mock/**',
+            '**/spec/**',
+    ]
+
+    static final List<String> SOURCE_FILE_PATTERNS = [
+            '**/!(*.spec).js'
+    ]
+
     static final Map<String, Profile> PROFILES = [
-            'default': new Profile(
-                    libraries: ['**/*.js'],
-                    source: ['**/!(*.spec).js'],
-                    tests: ['**/*.spec.js']
+            'default'  : new Profile(
+                    libraryBaseDefault: LIBRARY_BASE_PATTERNS,
+                    libraryFilesDefault: ['**/*.js'],
+                    sourceBasesDefault: [''],
+                    sourceFilesDefault: SOURCE_FILE_PATTERNS,
+                    testBasesDefault: TEST_BASE_PATTERNS,
+                    testFilesDefault: TEST_FILE_PATTERNS
             ),
             'angularJS': new Profile(
-                    libraries: ['**/angular.js', '**/*.js'],
-                    source: ['**/*.module.js', '**/!(*.spec).js'],
-                    tests: ['**/*.spec.js']
+                    libraryBaseDefault: LIBRARY_BASE_PATTERNS,
+                    libraryFilesDefault: ['**/angular.js', '**/*.js'],
+                    sourceBasesDefault: [''],
+                    sourceFilesDefault: ['**/*.module.js'] + SOURCE_FILE_PATTERNS,
+                    testBasesDefault: TEST_BASE_PATTERNS,
+                    testFilesDefault: ['**/angular-mocks.js'] + TEST_FILE_PATTERNS
             )
     ]
 

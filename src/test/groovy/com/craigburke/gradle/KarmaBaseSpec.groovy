@@ -22,6 +22,8 @@ class KarmaBaseSpec extends Specification {
     }
 
     protected Profile getProfile(String name) {
-        KarmaConstants.PROFILES[name].clone()
+        Profile profile = KarmaConstants.PROFILES[name].clone()
+        profile.setDefaults()
+        profile
     }
 }

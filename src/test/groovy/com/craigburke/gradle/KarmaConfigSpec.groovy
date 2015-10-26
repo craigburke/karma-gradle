@@ -2,13 +2,13 @@ package com.craigburke.gradle
 
 import spock.lang.Unroll
 import static TestConstants.*
-import static KarmaConstants.*
 
 class KarmaConfigSpec extends KarmaBaseSpec {
 
     @Unroll('Reporter #reporter is added to config file')
     def "reporters are added to config file"() {
         karmaConfig.reporters = [reporter]
+        karmaConfig.finalizeConfig()
 
         expect:
         configMap['reporters'] == [reporter]
@@ -20,6 +20,7 @@ class KarmaConfigSpec extends KarmaBaseSpec {
     @Unroll('Browser #browser is added to config file')
     def "Browsers are added to config file"() {
         karmaConfig.browsers = [browser]
+        karmaConfig.finalizeConfig()
 
         expect:
         configMap['browsers'] == [browser]
@@ -31,6 +32,7 @@ class KarmaConfigSpec extends KarmaBaseSpec {
     @Unroll('Framework #framework is added to config file')
     def "frameworks are added to config file"() {
         karmaConfig.frameworks = [framework]
+        karmaConfig.finalizeConfig()
 
         expect:
         configMap['frameworks'] == [framework]
@@ -45,6 +47,9 @@ class KarmaConfigSpec extends KarmaBaseSpec {
         karma {
             this[property] = value
         }
+
+        and:
+        karmaConfig.finalizeConfig()
 
         then:
         configMap[property] == value

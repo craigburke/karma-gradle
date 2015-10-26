@@ -10,6 +10,9 @@ class ProfileSpec extends KarmaBaseSpec {
         when:
         karma { }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
         configMap.files == getProfile('default').files
     }
@@ -31,6 +34,9 @@ class ProfileSpec extends KarmaBaseSpec {
             profile(profileName)
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
         configMap.files == getProfile(profileName).files
 
@@ -38,17 +44,21 @@ class ProfileSpec extends KarmaBaseSpec {
         profileName << PROFILE_LIST
     }
 
-    @Unroll('can override libaries list for the #profileName profile')
+    @Unroll('can override libary files list for the #profileName profile')
     def 'can override libraries list'() {
         when:
         karma {
             profile(profileName) {
-                libraries = ['lib.js']
+                libraryBases = ['']
+                libraryFiles = ['lib.js']
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
-        configMap.files == ["${currentProfile.librariesBase}lib.js"] + currentProfile.getFileList(SOURCE) + currentProfile.getFileList(TESTS)
+        configMap.files == ["lib.js"] + currentProfile.getFileListByType(SOURCE) + currentProfile.getFileListByType(TESTS)
 
         where:
         profileName << PROFILE_LIST
@@ -57,34 +67,42 @@ class ProfileSpec extends KarmaBaseSpec {
 
     }
 
-    @Unroll('can override sources list for the #profileName profile')
+    @Unroll('can override source file list for the #profileName profile')
     def 'can override sources list'() {
         when:
         karma {
             profile(profileName) {
-                source = ['source.js']
+                sourceBases = ['']
+                sourceFiles = ['source.js']
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
-        configMap.files == currentProfile.getFileList(LIBRARIES) + ["${currentProfile.sourceBase}source.js"] + currentProfile.getFileList(TESTS)
+        configMap.files == currentProfile.getFileListByType(LIBRARIES) + ['source.js'] + currentProfile.getFileListByType(TESTS)
 
         where:
         profileName << PROFILE_LIST
         currentProfile = getProfile(profileName)
     }
 
-    @Unroll('can override tests list for the #profileName profile')
+    @Unroll('can override test file list for the #profileName profile')
     def 'can override tests list'() {
         when:
         karma {
             profile(profileName) {
-                tests = ['test.js']
+                testBases = ['']
+                testFiles = ['test.js']
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
-        configMap.files == currentProfile.getFileList(LIBRARIES) + currentProfile.getFileList(SOURCE) + ["${currentProfile.testsBase}test.js"]
+        configMap.files == currentProfile.getFileListByType(LIBRARIES) + currentProfile.getFileListByType(SOURCE) + ['test.js']
 
         where:
         profileName << PROFILE_LIST
@@ -96,14 +114,20 @@ class ProfileSpec extends KarmaBaseSpec {
         when:
         karma {
             profile(profileName) {
-                libraries = ['lib.js']
-                source = ['source.js']
-                tests = ['test.js']
+                libraryBases = ['/libs/']
+                libraryFiles = ['lib.js']
+                sourceBases = ['/source/']
+                sourceFiles = ['source.js']
+                testBases = ['/test/']
+                testFiles = ['test.js']
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
-        configMap.files == ["${currentProfile.librariesBase}lib.js", "${currentProfile.sourceBase}source.js", "${currentProfile.testsBase}test.js"]
+        configMap.files == ['/libs/lib.js', '/source/source.js', '/test/test.js']
 
         where:
         profileName << PROFILE_LIST
@@ -115,16 +139,24 @@ class ProfileSpec extends KarmaBaseSpec {
         when:
         karma {
             profile(profileName) {
-                libraries = ['lib1.js', 'lib2.js', 'foo/bar/lib3.js']
-                librariesBase = '/libs/'
+                libraryBases = ['/libs/', '/vendor/']
+                libraryFiles = ['lib1.js', 'foo/bar/lib2.js']
 
-                source = []
-                tests = []
+                sourceFiles = []
+                testFiles = []
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
-        configMap.files == ['/libs/lib1.js', '/libs/lib2.js', '/libs/foo/bar/lib3.js']
+        configMap.files == [
+                '/libs/lib1.js',
+                '/vendor/lib1.js',
+                '/libs/foo/bar/lib2.js',
+                '/vendor/foo/bar/lib2.js'
+        ]
 
         where:
         profileName << PROFILE_LIST
@@ -133,17 +165,20 @@ class ProfileSpec extends KarmaBaseSpec {
 
 
     @Unroll('can set a custom source base path #profileName profile')
-    def 'can set a custom source base path'() {
+    def 'can set a custom source base paths'() {
         when:
         karma {
             profile(profileName) {
-                source = ['source1.js', 'source2.js', 'foo/bar/source3.js']
-                sourceBase = '/src/'
+                sourceBases = ['/src/']
+                sourceFiles = ['source1.js', 'source2.js', 'foo/bar/source3.js']
 
-                libraries = []
-                tests = []
+                libraryFiles = []
+                testFiles = []
             }
         }
+
+        and:
+        karmaConfig.finalizeConfig()
 
         then:
         configMap.files == ['/src/source1.js', '/src/source2.js', '/src/foo/bar/source3.js']
@@ -158,16 +193,143 @@ class ProfileSpec extends KarmaBaseSpec {
         when:
         karma {
             profile(profileName) {
-                tests = ['test1.js', 'test2.js', 'foo/bar/test3.js']
-                testsBase = '/tests/'
+                testFiles = ['test1.js', 'test2.js', 'foo/bar/test3.js']
+                testBases = ['/tests/']
 
-                libraries = []
-                source = []
+                libraryFiles = []
+                sourceFiles = []
             }
         }
 
+        and:
+        karmaConfig.finalizeConfig()
+
         then:
         configMap.files == ['/tests/test1.js', '/tests/test2.js', '/tests/foo/bar/test3.js']
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+    }
+
+    @Unroll('library defaults set when using asset pipeline for profile #profileName')
+    def 'Defaults set when using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                sourceFiles = []
+                testFiles = []
+            }
+        }
+
+        and:
+        karmaConfig.finalizeConfig(true, 'assets/')
+
+        then:
+        configMap.files == []
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+    }
+
+    @Unroll('library defaults set when not using asset pipeline for profile #profileName')
+    def 'Library defaults set when not using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                sourceFiles = []
+                testFiles = []
+            }
+        }
+        and:
+        karmaConfig.finalizeConfig(false)
+
+        then:
+        configMap.files == Profile.getFileList(currentProfile.libraryBaseDefault, currentProfile.libraryFilesDefault)
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+    }
+
+    @Unroll('Source defaults set when using asset pipeline for profile #profileName')
+    def 'Source defaults set when using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                libraryFiles = []
+                testFiles = []
+            }
+        }
+
+        and:
+        karmaConfig.finalizeConfig(true, 'assets', 'compile')
+
+        then:
+        configMap.files == ['compile/app.js', 'compile/application.js']
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+    }
+
+    @Unroll('Source defaults set when not using asset pipeline for profile #profileName')
+    def 'Source defaults set when not using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                libraryFiles = []
+                testFiles = []
+            }
+        }
+        and:
+        karmaConfig.finalizeConfig(false)
+
+        then:
+        configMap.files == Profile.getFileList(currentProfile.sourceBasesDefault, currentProfile.sourceFilesDefault)
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+    }
+
+    @Unroll('Test defaults set when using asset pipeline for profile #profileName')
+    def 'Test defaults set when using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                libraryFiles = []
+                sourceFiles = []
+            }
+        }
+
+        and:
+        karmaConfig.finalizeConfig(true, 'assets', 'compile')
+
+        then:
+        configMap.files == Profile.getFileList(testBases, currentProfile.testFilesDefault)
+
+        where:
+        profileName << PROFILE_LIST
+        currentProfile = getProfile(profileName)
+        testBases =  ['assets/'] + currentProfile.testBasesDefault as List<String>
+    }
+
+    @Unroll('Test defaults set when not using asset pipeline for profile #profileName')
+    def 'Test defaults set when not using asset pipeline'() {
+        when:
+        karma {
+            profile(profileName) {
+                libraryFiles = []
+                sourceFiles = []
+            }
+        }
+        and:
+        karmaConfig.finalizeConfig(false)
+
+        then:
+        configMap.files == Profile.getFileList(currentProfile.testBasesDefault, currentProfile.testFilesDefault)
 
         where:
         profileName << PROFILE_LIST
