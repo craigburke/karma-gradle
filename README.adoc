@@ -84,10 +84,10 @@ useful if the order that the files are loaded in matters.
 ----
 karma {
     profile('default')  {
-        libraryBases = ['**/libs/', '**/vendor/']
+        libraryBases = ['**/libs/']
         libraryFiles = ['jquery.js', 'lib1.js'] // <1>
 
-        sourceBases = ['**/src/', '**/app/']
+        sourceBases = ['src/', 'app/']
         sourceFiles = ['source1.js', '**/*.js'] // <2>
 
         testBases = ['tests/']
@@ -96,7 +96,7 @@ karma {
 }
 ----
 <1> Overriding both the base path and list of library files. This will add `/libs/&#42;&#42;/jquery.js` and `/libs/&#42;&#42;/lib1.js` to the start of the karma files list
-<2> Overriding both the base path and list of source files. This will add `/src/source1.js` and `/src/&#42;&#42;/&#42;.js` to the files list after the library files.
+<2> Overriding both the base path and list of source files. This will add `src/source1.js`, `app/source1.js`, `src/&#42;&#42;/&#42;.js` and `app/&#42;&#42;/&#42;.js` to the files list after the library files.
 <3> Overriding both the base path and list of test files. This will add `/tests/&#42;&#42;/&#42;test.js` to the files list after the source files.
 
 NOTE: you can always build your own files list by setting the `files` property directly (see Advanced Configuration).
