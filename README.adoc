@@ -83,7 +83,7 @@ useful if the order that the files are loaded in matters.
 [source,gradle,subs='attributes']
 ----
 karma {
-    profile 'default'  {
+    profile('default')  {
         libraryBases = ['**/libs/', '**/vendor/']
         libraryFiles = ['jquery.js', 'lib1.js'] // <1>
 
