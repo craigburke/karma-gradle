@@ -73,10 +73,7 @@ class KarmaPlugin implements Plugin<Project> {
 
             def assetConfig = project.extensions.findByName('assets')
             if (assetConfig) {
-                config.finalizeConfig(true, (String)assetConfig.assetsPath, (String)assetConfig.compileDir)
-                ['karmaRun', 'karmaWatch'].each {
-                    project.tasks.findByName(it).dependsOn 'assetCompile'
-                }
+                config.finalizeConfig(true, (String)assetConfig.assetsPath)
             }
             else {
                 config.finalizeConfig(false)

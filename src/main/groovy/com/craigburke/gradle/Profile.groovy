@@ -20,19 +20,20 @@ class Profile {
     List<String> testFilesDefault
     List<String> testFiles
 
-    void setDefaults(boolean usesAssetPipeline = false, String assetPath = '', String assetPipelineCompileDir = '') {
+    void setDefaults(boolean usesAssetPipeline = false, String assetPath = '') {
         if (libraryBases == null) {
-            libraryBases = usesAssetPipeline ? [] : libraryBaseDefault
+            libraryBases = usesAssetPipeline ? ["${assetPath}/bower/"] : []
+            libraryBases += libraryBaseDefault
         }
         if (libraryFiles == null) {
-            libraryFiles = usesAssetPipeline ? [] : libraryFilesDefault
+            libraryFiles = libraryFilesDefault
         }
 
         if (sourceBases == null) {
-            sourceBases = usesAssetPipeline ? ["${assetPipelineCompileDir}/"] : ['']
+            sourceBases = usesAssetPipeline ? ["${assetPath}/"] : sourceBasesDefault
         }
         if (sourceFiles == null) {
-            sourceFiles = usesAssetPipeline ? ['app.js' , 'application.js'] : sourceFilesDefault
+            sourceFiles = sourceFilesDefault
         }
 
         if (testBases == null) {

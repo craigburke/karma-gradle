@@ -223,14 +223,15 @@ class ProfileSpec extends KarmaBaseSpec {
         }
 
         and:
-        karmaConfig.finalizeConfig(true, 'assets/')
+        karmaConfig.finalizeConfig(true, 'assets')
 
         then:
-        configMap.files == []
+        configMap.files == Profile.getFileList(bases, currentProfile.libraryFilesDefault)
 
         where:
         profileName << PROFILE_LIST
         currentProfile = getProfile(profileName)
+        bases = ['assets/bower/'] + currentProfile.libraryBaseDefault as List<String>
     }
 
     @Unroll('library defaults set when not using asset pipeline for profile #profileName')
@@ -264,10 +265,10 @@ class ProfileSpec extends KarmaBaseSpec {
         }
 
         and:
-        karmaConfig.finalizeConfig(true, 'assets', 'compile')
+        karmaConfig.finalizeConfig(true, 'assets')
 
         then:
-        configMap.files == ['compile/app.js', 'compile/application.js']
+        configMap.files == Profile.getFileList(['assets/'], currentProfile.sourceFilesDefault)
 
         where:
         profileName << PROFILE_LIST
@@ -305,7 +306,7 @@ class ProfileSpec extends KarmaBaseSpec {
         }
 
         and:
-        karmaConfig.finalizeConfig(true, 'assets', 'compile')
+        karmaConfig.finalizeConfig(true, 'assets')
 
         then:
         configMap.files == Profile.getFileList(testBases, currentProfile.testFilesDefault)

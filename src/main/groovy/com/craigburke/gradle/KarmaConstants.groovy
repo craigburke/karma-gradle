@@ -25,19 +25,20 @@ class KarmaConstants {
             'coverage': ['karma-coverage']
     ]
 
-    static final List<String> LIBRARY_BASE_PATTERNS = [
-            '**/bower_components/', '**/bower/', '**/vendor/'
-    ]
+    static final List<String> LIBRARY_BASE_PATTERNS = ['bower_components/']
 
-    static final List<String> TEST_BASE_PATTERNS = [
-            '**/tests/', 'src/test/js/'
-    ]
+    static final List<String> TEST_BASE_PATTERNS = ['src/']
 
     static final List<String> TEST_FILE_PATTERNS = [
             '**/*.spec.js',
-            '**/tests/**.js',
-            '**/mock/**',
-            '**/spec/**',
+            '**/test/**/*.js',
+            '**/tests/**/*.js',
+            '**/mock/**/*.js',
+            '**/spec/**/*.js',
+    ]
+
+    static final List<String> SOURCE_BASE_PATTERNS = [
+            'src/assets/'
     ]
 
     static final List<String> SOURCE_FILE_PATTERNS = [
@@ -48,7 +49,7 @@ class KarmaConstants {
             'default'  : new Profile(
                     libraryBaseDefault: LIBRARY_BASE_PATTERNS,
                     libraryFilesDefault: ['**/*.js'],
-                    sourceBasesDefault: [''],
+                    sourceBasesDefault: SOURCE_BASE_PATTERNS,
                     sourceFilesDefault: SOURCE_FILE_PATTERNS,
                     testBasesDefault: TEST_BASE_PATTERNS,
                     testFilesDefault: TEST_FILE_PATTERNS
@@ -56,10 +57,10 @@ class KarmaConstants {
             'angularJS': new Profile(
                     libraryBaseDefault: LIBRARY_BASE_PATTERNS,
                     libraryFilesDefault: ['**/angular.js', '**/*.js'],
-                    sourceBasesDefault: [''],
-                    sourceFilesDefault: ['**/*.module.js'] + SOURCE_FILE_PATTERNS,
+                    sourceBasesDefault: SOURCE_BASE_PATTERNS,
+                    sourceFilesDefault: ['**/app.js', '**/application.js', '**/*.module.js'] + SOURCE_FILE_PATTERNS,
                     testBasesDefault: TEST_BASE_PATTERNS,
-                    testFilesDefault: ['**/angular-mocks.js'] + TEST_FILE_PATTERNS
+                    testFilesDefault: TEST_FILE_PATTERNS
             )
     ]
 

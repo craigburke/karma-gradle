@@ -27,9 +27,9 @@ class KarmaModuleExtension {
         this.profileConfig = profileConfig
     }
 
-    void finalizeConfig(boolean usesAssetPipeline = false, String assetPath = '', String assetCompileDir = '') {
+    void finalizeConfig(boolean usesAssetPipeline = false, String assetPath = '') {
         profile = PROFILES[profileName].clone()
-        profile.setDefaults(usesAssetPipeline, assetPath, assetCompileDir)
+        profile.setDefaults(usesAssetPipeline, assetPath)
 
         if (profile && profileConfig) {
             profileConfig.rehydrate(profile, profile, profile).call()
