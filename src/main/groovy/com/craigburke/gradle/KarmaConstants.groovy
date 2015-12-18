@@ -13,9 +13,9 @@ class KarmaConstants {
     ]
 
     static final FRAMEWORK_DEPENDENCIES = [
-            'jasmine': ['karma-jasmine'],
-            'mocha'  : ['karma-mocha'],
-            'qunit'  : ['karma-qunit']
+            'jasmine': ['karma-jasmine', 'jasmine-core'],
+            'mocha'  : ['karma-mocha', 'mocha'],
+            'qunit'  : ['karma-qunit', 'qunitjs']
     ]
 
     static final REPORTER_DEPENDENCIES = [

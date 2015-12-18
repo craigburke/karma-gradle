@@ -6,7 +6,6 @@ import com.moowork.gradle.node.task.NodeTask
 import com.moowork.gradle.node.task.NpmTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
 
 class KarmaPlugin implements Plugin<Project> {
 
