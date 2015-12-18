@@ -25,16 +25,11 @@ class KarmaConstants {
             'coverage': ['karma-coverage']
     ]
 
-    static final List<String> LIBRARY_BASE_PATTERNS = ['bower_components/']
-
-    static final List<String> TEST_BASE_PATTERNS = ['src/']
-
-    static final List<String> TEST_FILE_PATTERNS = [
-            '**/*.spec.js',
-            '**/test/**/*.js',
-            '**/tests/**/*.js',
-            '**/mock/**/*.js',
-            '**/spec/**/*.js',
+    static final List<String> LIBRARY_BASE_PATTERNS = [
+            '**/assets/bower_components/',
+            '**/assets/bower/',
+            '**/assets/vendor/',
+            '**/assets/libs/'
     ]
 
     static final List<String> SOURCE_BASE_PATTERNS = [
@@ -42,7 +37,26 @@ class KarmaConstants {
     ]
 
     static final List<String> SOURCE_FILE_PATTERNS = [
-            '**/!(*.spec).js'
+            '**/*!(spec|Spec).js'
+    ]
+
+    static final List<String> ANGULAR_SOURCE_FILE_PATTERNS = [
+            '**/app.js',
+            '**/application.js',
+            '**/*.module.js',
+            '**/!(controllers|directives|services|domain)/*!(Spec|spec).js',
+            '**/*!(Spec|spec).js'
+    ]
+
+    static final List<String> TEST_BASE_PATTERNS = ['src/']
+
+    static final List<String> TEST_FILE_PATTERNS = [
+            '**/*spec.js',
+            '**/*Spec.js',
+            '**/test/**/*.js',
+            '**/tests/**/*.js',
+            '**/mock/**/*.js',
+            '**/spec/**/*.js',
     ]
 
     static final Map<String, Profile> PROFILES = [
@@ -58,7 +72,7 @@ class KarmaConstants {
                     libraryBaseDefault: LIBRARY_BASE_PATTERNS,
                     libraryFilesDefault: ['**/angular.js', '**/*.js'],
                     sourceBasesDefault: SOURCE_BASE_PATTERNS,
-                    sourceFilesDefault: ['**/app.js', '**/application.js', '**/*.module.js'] + SOURCE_FILE_PATTERNS,
+                    sourceFilesDefault: ANGULAR_SOURCE_FILE_PATTERNS,
                     testBasesDefault: TEST_BASE_PATTERNS,
                     testFilesDefault: TEST_FILE_PATTERNS
             )

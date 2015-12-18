@@ -10,19 +10,38 @@ import org.gradle.api.tasks.Delete
 
 class KarmaPlugin implements Plugin<Project> {
 
-    void apply(Project project) {
-        project.plugins.apply NodePlugin
-        NodeExtension nodeConfig = project.extensions.findByName('node')
-        nodeConfig.download = true
+    static final String NPM_OUTPUT_PATH = 'node_modules'
+    static final String DEFAULT_NODE_VERSION = '4.2.3'
 
-        final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath.replace(File.separator, '/') + '/node_modules/'
-        final File KARMA_EXEC = project.file(NPM_OUTPUT_PATH + '/karma/bin/karma')
+    void apply(Project project) {
+        setupNode(project)
+
+        final File KARMA_EXEC = project.file("${NPM_OUTPUT_PATH}/karma/bin/karma")
         final File KARMA_CONFIG = project.file("${project.buildDir.absolutePath}/karma.conf.js")
 
         KarmaModuleExtension config = project.extensions.create('karma', KarmaModuleExtension)
         boolean karmaDebug = project.hasProperty('karmaDebug') ? project.property('karmaDebug') : false
-        
-        project.task('karmaDependencies', type: NpmTask, description: 'Installs dependencies needed for running karma tests.', group: null)
+
+        def nodeExecOverrides = {
+            if (!karmaDebug) {
+                it.standardOutput = new ByteArrayOutputStream()
+            }
+        }
+
+        project.task('karmaInit', group: null,
+                description: 'Sets up folder structure needed for the karma plugin') {
+            project.file(NPM_OUTPUT_PATH).mkdirs()
+        }
+
+        project.task('karmaDependencies', type: NpmTask, dependsOn: 'karmaInit',
+                description: 'Installs dependencies needed for running karma tests.', group: null) {
+            args = ['install'] + config.dependencies
+            if (!karmaDebug) {
+                args += ['--silent']
+            }
+            outputs.dir project.file(NPM_OUTPUT_PATH)
+            execOverrides nodeExecOverrides
+        }
 
         project.task('karmaGenerateConfig', description: 'Generates the karma config file', group: null) {
             outputs.file KARMA_CONFIG
@@ -48,46 +67,53 @@ class KarmaPlugin implements Plugin<Project> {
             args = ['start', KARMA_CONFIG.absolutePath, '--auto-watch']
         }
 
-        project.task('karmaClean', type: Delete, group: 'Karma',
+        project.task('karmaClean', group: 'Karma',
                 description: 'Deletes the generated karma config file and removes the dependencies') {
-            delete KARMA_CONFIG
-            delete getDependencyPaths(NPM_OUTPUT_PATH, config.dependencies)
-        }
-
-        project.afterEvaluate {
-            project.tasks.findByName('karmaDependencies').configure {
-                args = ['install'] + config.dependencies
-                outputs.files getDependencyPaths(NPM_OUTPUT_PATH, config.dependencies)
-                execOverrides {
-                    OutputStream out = new ByteArrayOutputStream()
-                    if (!karmaDebug) {
-                        it.standardOutput = out
-                        it.errorOutput = out
+            doLast {
+                KARMA_CONFIG.delete()
+                project.file(NPM_OUTPUT_PATH).listFiles().each { File file ->
+                    if (file.isDirectory() && it.name.startsWith('karma')) {
+                        file.deleteDir()
                     }
                 }
             }
+        }
 
-            if (config.basePath == null) {
-                config.basePath = project.rootDir.absolutePath
-            }
-
-            def assetConfig = project.extensions.findByName('assets')
-            if (assetConfig) {
-                config.finalizeConfig(true, (String)assetConfig.assetsPath)
-            }
-            else {
-                config.finalizeConfig(false)
-            }
-
-            def testTask = project.tasks.findByName('test')
-            if (testTask) {
-                testTask.dependsOn 'karmaRun'
-            }
+        project.afterEvaluate {
+            setDefaultBasePath(project, config)
+            setTaskDependencies(project)
+            finalizeConfig(project, config)
         }
     }
-    
-    String[] getDependencyPaths(String npmPath, dependencies) {
-        dependencies.collect { "${npmPath}/${it.split('@')[0]}" }
+
+    private static void setupNode(Project project) {
+        project.plugins.apply NodePlugin
+        NodeExtension nodeConfig = project.extensions.findByName('node') as NodeExtension
+        nodeConfig.download = true
+        nodeConfig.version = DEFAULT_NODE_VERSION
+    }
+
+    private static void setDefaultBasePath(Project project, KarmaModuleExtension config) {
+        if (config.basePath == null) {
+            config.basePath = project.rootDir.absolutePath
+        }
+    }
+
+    private static void setTaskDependencies(Project project) {
+        def testTask = project.tasks.findByName('test')
+        if (testTask) {
+            testTask.dependsOn 'karmaRun'
+        }
+    }
+
+    private static void finalizeConfig(Project project, KarmaModuleExtension config) {
+        def assetConfig = project.extensions.findByName('assets')
+        if (assetConfig) {
+            config.finalizeConfig(true, (String)assetConfig.assetsPath)
+        }
+        else {
+            config.finalizeConfig(false)
+        }
     }
 
 }
