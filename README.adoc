@@ -108,7 +108,7 @@ By default the plugin will automatically install all needed browser, framework a
 [source,gradle,subs='attributes']
 ----
 karma {
-    dependencies ['karma-sinon']
+    dependencies(['karma-sinon'])
 }
 ----
 
@@ -117,7 +117,7 @@ You can also lock any dependency to a specific version by adding it this way wit
 [source,gradle,subs='attributes']
 ----
 karma {
-    dependencies ['phantomjs@1.9.7-14']
+    dependencies(['phantomjs@1.9.7-14'])
 }
 ----
 
