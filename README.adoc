@@ -45,7 +45,7 @@ plugins {
 
 karma {
     basePath = 'src/assets' // <1>
-    colors = true // </2>
+    colors = true // <2>
     profile 'angularJS' // <3>
 
     browsers = ['PhantomJS'] // <4>
