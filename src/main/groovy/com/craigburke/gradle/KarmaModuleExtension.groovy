@@ -6,6 +6,7 @@ import static KarmaConstants.*
 class KarmaModuleExtension {
 
     String basePath
+    boolean colors = true
 
     List frameworks = ['jasmine']
     List browsers = ['PhantomJS']
@@ -72,6 +73,7 @@ class KarmaModuleExtension {
 
         Map properties = [
                 basePath     : basePath,
+                colors       : colors,
                 logLevel     : 'ERROR',
                 files        : karmaFiles,
                 browsers     : browsers,

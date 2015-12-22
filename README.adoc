@@ -1,4 +1,4 @@
-:version: 1.3.1
+:version: 1.4.0
 
 = Karma Gradle Plugin
 
@@ -45,18 +45,20 @@ plugins {
 
 karma {
     basePath = 'src/assets' // <1>
-    profile 'angularJS' // <2>
+    colors = true // </2>
+    profile 'angularJS' // <3>
 
-    browsers = ['PhantomJS'] // <3>
-    frameworks = ['jasmine'] // <4>
-    reporters = ['junit'] // <5>
+    browsers = ['PhantomJS'] // <4>
+    frameworks = ['jasmine'] // <5>
+    reporters = ['junit'] // <6>
 }
 ----
 <1> Optional base path for resolving relative paths
-<2> File pattern profile to use. **Possible values:** `default, angularJS`
-<3> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
-<4> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
-<5> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
+<2> Whether to show colors on the screen (default is true)
+<3> File pattern profile to use. **Possible values:** `default, angularJS`
+<4> Runs tests in the browsers listed here and installs the launcher dependencies. **Possible values:** `PhantomJS, Firefox, Chrome, ChromeCanary, Opera, Internet Explorer, Safari`
+<5> Uses the listed frameworks and installs their dependencies. **Possible values:** `jasmine, mocha, qunit`.
+<6> Uses additional reporters and installs their dependencies. **Possible values:** `progress, junit, coverage, growl, teamcity`
 
 NOTE: if *basePath* is not set, it defaults the project root.
 
@@ -135,8 +137,6 @@ karma {
     ]
 
     exclude = ['jquery.js']
-
-    colors = true
     junitReporter = [outputDir: 'test-dir' ]
 }
 ----

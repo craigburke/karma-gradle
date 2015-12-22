@@ -80,6 +80,7 @@ class KarmaPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             setDefaultBasePath(project, config)
+            setColor(project, config)
             setTaskDependencies(project)
             finalizeConfig(project, config)
         }
@@ -95,6 +96,17 @@ class KarmaPlugin implements Plugin<Project> {
     private static void setDefaultBasePath(Project project, KarmaModuleExtension config) {
         if (config.basePath == null) {
             config.basePath = project.rootDir.absolutePath
+        }
+    }
+
+    private static void setColor(Project project, KarmaModuleExtension config) {
+        if (config.colors) {
+            ['karmaRun', 'karmaWatch'].each { String taskName ->
+                def task = project.tasks.findByName(taskName)
+                task?.configure {
+                    args += '--color'
+                }
+            }
         }
     }
 
