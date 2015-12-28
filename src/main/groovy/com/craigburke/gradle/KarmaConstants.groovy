@@ -44,7 +44,7 @@ class KarmaConstants {
             '**/app.js',
             '**/application.js',
             '**/*.module.js',
-            '**/!(controllers|directives|services|domain)/*!(Spec|spec).js',
+            '**/!(controllers|directives|services|domain|conf|config)/*!(Spec|spec).js',
             '**/*!(Spec|spec).js'
     ]
 
@@ -70,7 +70,7 @@ class KarmaConstants {
             ),
             'angularJS': new Profile(
                     libraryBaseDefault: LIBRARY_BASE_PATTERNS,
-                    libraryFilesDefault: ['**/angular.js', '**/*.js'],
+                    libraryFilesDefault: ['**/jquery.js', '**/angular.js', '**/*.js'],
                     sourceBasesDefault: SOURCE_BASE_PATTERNS,
                     sourceFilesDefault: ANGULAR_SOURCE_FILE_PATTERNS,
                     testBasesDefault: TEST_BASE_PATTERNS,
