@@ -48,7 +48,7 @@ class KarmaConstants {
             '**/*!(Spec|spec).js'
     ]
 
-    static final List<String> TEST_BASE_PATTERNS = ['src/']
+    static final List<String> TEST_BASE_PATTERNS = ['src/test/']
 
     static final List<String> TEST_FILE_PATTERNS = [
             '**/*spec.js',
