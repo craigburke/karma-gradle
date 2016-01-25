@@ -34,7 +34,7 @@ class KarmaPlugin implements Plugin<Project> {
 
         project.task('karmaDependencies', type: NpmTask, dependsOn: 'karmaInit',
                 description: 'Installs dependencies needed for running karma tests.', group: null) {
-            args = ['install'] + config.dependencies
+            args = 'install'
             if (!karmaDebug) {
                 args += ['--silent']
             }
@@ -79,10 +79,18 @@ class KarmaPlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate {
+            setKarmaDependencies(project, config)
             setDefaultBasePath(project, config)
             setColor(project, config)
             setTaskDependencies(project)
             finalizeConfig(project, config)
+        }
+    }
+
+    private static void setKarmaDependencies(Project project, KarmaModuleExtension config) {
+        def karmaDependencies = project.tasks.findByName('karmaDependencies')
+        karmaDependencies.configure {
+            args += config.dependencies
         }
     }
 
