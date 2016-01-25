@@ -34,7 +34,7 @@ class KarmaPlugin implements Plugin<Project> {
 
         project.task('karmaDependencies', type: NpmTask, dependsOn: 'karmaInit',
                 description: 'Installs dependencies needed for running karma tests.', group: null) {
-            args = 'install'
+            args = ['install']
             if (!karmaDebug) {
                 args += ['--silent']
             }
