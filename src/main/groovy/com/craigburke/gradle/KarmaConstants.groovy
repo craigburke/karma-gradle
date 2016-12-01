@@ -60,7 +60,7 @@ class KarmaConstants {
             '**/app.js',
             '**/application.js',
             '**/*.module.js',
-            '**/!(controllers|directives|services|domain|conf|config)/*!(Spec|spec).js',
+            '**/!(controllers|directives|components|services|domain|conf|config)/*!(Spec|spec).js',
             '**/*!(Spec|spec).js'
     ]
 
