@@ -18,7 +18,7 @@ package com.craigburke.gradle
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.task.NodeTask
-import com.moowork.gradle.node.task.NpmTask
+import com.moowork.gradle.node.npm.NpmTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
