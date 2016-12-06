@@ -27,6 +27,15 @@ class KarmaPlugin implements Plugin<Project> {
     static final String NPM_OUTPUT_PATH = 'node_modules'
     static final String DEFAULT_NODE_VERSION = '4.2.3'
 
+    static final String INIT_TASK = 'karmaInit'
+    static final String REFRESH_TASK = 'karmaRefresh'
+    static final String CLEAN_TASK = 'karmaInit'
+    static final String RUN_TASK = 'karmaRun'
+    static final String WATCH_TASK = 'karmaWatch'
+    static final String GENERATE_CONFIG_TASK = 'karmaGenerateConfig'
+    static final String DEPENDENCIES_TASK = 'karmaDependencies'
+    static final String GROUP_NAME = 'Karma'
+
     void apply(Project project) {
         setupNode(project)
 
@@ -42,12 +51,12 @@ class KarmaPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('karmaInit', group: null,
+        project.task(INIT_TASK, group: null,
                 description: 'Sets up folder structure needed for the karma plugin') {
             project.file(NPM_OUTPUT_PATH).mkdirs()
         }
 
-        project.task('karmaDependencies', type: NpmTask, dependsOn: 'karmaInit',
+        project.task(DEPENDENCIES_TASK, type: NpmTask, dependsOn: INIT_TASK,
                 description: 'Installs dependencies needed for running karma tests.', group: null) {
             args = ['install']
             if (!karmaDebug) {
@@ -57,31 +66,31 @@ class KarmaPlugin implements Plugin<Project> {
             execOverrides nodeExecOverrides
         }
 
-        project.task('karmaGenerateConfig', description: 'Generates the karma config file', group: null) {
+        project.task(GENERATE_CONFIG_TASK, description: 'Generates the karma config file', group: null) {
             outputs.file KARMA_CONFIG
             doLast {
                 KARMA_CONFIG.parentFile.mkdirs()
                 KARMA_CONFIG.text = config.configJavaScript
             }
-            shouldRunAfter 'karmaClean'
+            shouldRunAfter CLEAN_TASK
         }
 
-        project.task('karmaRefresh', group: 'Karma', dependsOn: ['karmaClean', 'karmaGenerateConfig'],
+        project.task(REFRESH_TASK, group: GROUP_NAME, dependsOn: [CLEAN_TASK, GENERATE_CONFIG_TASK],
                 description: 'Refreshes the generated karma config file')
 
-        project.task('karmaRun', type: NodeTask, dependsOn: ['karmaDependencies', 'karmaGenerateConfig'], group: 'Karma',
+        project.task(RUN_TASK, type: NodeTask, dependsOn: [DEPENDENCIES_TASK, GENERATE_CONFIG_TASK], group: 'Karma',
                  description: 'Executes karma tests') {
             script = KARMA_EXEC
             args = ['start', KARMA_CONFIG.absolutePath, '--single-run']
         }
 
-        project.task('karmaWatch', type: NodeTask, dependsOn: ['karmaDependencies', 'karmaGenerateConfig'], group: 'Karma',
+        project.task(WATCH_TASK, type: NodeTask, dependsOn: [DEPENDENCIES_TASK, GENERATE_CONFIG_TASK], group: 'Karma',
                 description: 'Executes karma tests in watch mode') {
             script = KARMA_EXEC
             args = ['start', KARMA_CONFIG.absolutePath, '--auto-watch']
         }
 
-        project.task('karmaClean', group: 'Karma',
+        project.task(CLEAN_TASK, group: GROUP_NAME,
                 description: 'Deletes the generated karma config file and removes the dependencies') {
             doLast {
                 KARMA_CONFIG.delete()
@@ -103,7 +112,7 @@ class KarmaPlugin implements Plugin<Project> {
     }
 
     private static void setKarmaDependencies(Project project, KarmaModuleExtension config) {
-        def karmaDependencies = project.tasks.findByName('karmaDependencies')
+        def karmaDependencies = project.tasks.findByName(DEPENDENCIES_TASK)
         karmaDependencies.configure {
             args += config.dependencies
         }
@@ -124,7 +133,7 @@ class KarmaPlugin implements Plugin<Project> {
 
     private static void setColor(Project project, KarmaModuleExtension config) {
         if (config.colors) {
-            ['karmaRun', 'karmaWatch'].each { String taskName ->
+            [RUN_TASK, WATCH_TASK].each { String taskName ->
                 def task = project.tasks.findByName(taskName)
                 task?.configure {
                     args += '--color'
@@ -136,7 +145,7 @@ class KarmaPlugin implements Plugin<Project> {
     private static void setTaskDependencies(Project project) {
         def testTask = project.tasks.findByName('test')
         if (testTask) {
-            testTask.dependsOn 'karmaRun'
+            testTask.dependsOn RUN_TASK
         }
     }
 
