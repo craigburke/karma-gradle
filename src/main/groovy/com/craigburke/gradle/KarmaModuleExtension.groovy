@@ -20,6 +20,9 @@ import static KarmaConstants.*
 
 class KarmaModuleExtension {
 
+    private static final String START_FUNC ='#startKarmaFunction#'
+    private static final String END_FUNC ='#endKarmaFunction#'
+
     String basePath
     boolean colors = true
 
@@ -74,7 +77,9 @@ class KarmaModuleExtension {
         }
 
         def simpleAdditionalDependencies = additionalDependencies.collect { getSimpleDependency(it) }
-        def overriddenDependencies = dependencies.findAll { simpleAdditionalDependencies?.contains(getSimpleDependency(it)) }
+        def overriddenDependencies = dependencies.findAll {
+            simpleAdditionalDependencies?.contains(getSimpleDependency(it))
+        }
         dependencies = dependencies - overriddenDependencies + additionalDependencies
         dependencies.findAll { it }
     }
@@ -102,11 +107,21 @@ class KarmaModuleExtension {
 
         def json = new JsonBuilder()
         json(properties)
-        json.toPrettyString()
+        replaceFunctionTokens(json)
+    }
+
+    private static String replaceFunctionTokens(JsonBuilder config) {
+        config.toPrettyString()
+                .replaceAll(/"$START_FUNC/, '')
+                .replaceAll(/$END_FUNC"/, '')
     }
 
     String getConfigJavaScript() {
         "module.exports = function(config) { config.set(${configJson}) };"
+    }
+
+    static String jsFunction(String function) {
+        "$START_FUNC$function$END_FUNC"
     }
 }
 

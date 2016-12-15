@@ -62,4 +62,29 @@ class KarmaConfigSpec extends KarmaBaseSpec {
         'arrayProp'   | ['foo', 'bar', 'foobar']
     }
 
+    def "it should have a function in the json"(){
+        given:
+            String jsFunction = 'function(){console.log(\'hi\');}'
+            KarmaModuleExtension temp = new KarmaModuleExtension()
+            karma {
+                this['myFunc'] = temp.jsFunction(jsFunction)
+            }
+            karmaConfig.finalizeConfig()
+        when:
+            String config = karmaConfig.configJson
+        then:
+            config.contains('"myFunc": ' + jsFunction)
+    }
+
+    def "it should add a property with the function tokens"(){
+        given:
+            String jsFunction = 'function(){console.log(\'hi\');}'
+            karmaConfig.finalizeConfig()
+        when:
+            String encodedFunc = karmaConfig.jsFunction(jsFunction)
+
+        then:
+            encodedFunc == "#startKarmaFunction#$jsFunction#endKarmaFunction#"
+    }
+
 }
