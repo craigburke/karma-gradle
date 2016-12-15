@@ -29,7 +29,7 @@ class KarmaPlugin implements Plugin<Project> {
 
     static final String INIT_TASK = 'karmaInit'
     static final String REFRESH_TASK = 'karmaRefresh'
-    static final String CLEAN_TASK = 'karmaInit'
+    static final String CLEAN_TASK = 'karmaClean'
     static final String RUN_TASK = 'karmaRun'
     static final String WATCH_TASK = 'karmaWatch'
     static final String GENERATE_CONFIG_TASK = 'karmaGenerateConfig'
