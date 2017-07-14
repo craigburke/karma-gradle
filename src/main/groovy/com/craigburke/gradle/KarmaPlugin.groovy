@@ -95,7 +95,7 @@ class KarmaPlugin implements Plugin<Project> {
             doLast {
                 KARMA_CONFIG.delete()
                 project.file(NPM_OUTPUT_PATH).listFiles().each { File file ->
-                    if (file.isDirectory() && it.name.startsWith('karma')) {
+                    if (file.isDirectory() && file.name.startsWith('karma')) {
                         file.deleteDir()
                     }
                 }
